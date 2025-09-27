@@ -21,6 +21,11 @@ export default function Home() {
     router.push("/produk");
   };
 
+  const teaserProducts = [
+    { name: "Kaos Polos Hitam", price: "Rp 150.000", category: "Casual" },
+    { name: "Kemeja Slim Fit", price: "Rp 300.000", category: "Smart Casual" },
+  ];
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-start text-center px-2 sm:px-4 pt-16">
       {/* Hero Section */}
@@ -55,63 +60,61 @@ export default function Home() {
         )}
       </div>
 
-      {/* About Section */}
-      <div className="w-full bg-gray-200 dark:bg-gray-700 py-8 px-2 sm:px-4">
-        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-4 text-black dark:text-white">
-          TENTANG FEBSIN
-        </h2>
-        <p className="text-center text-gray-600 dark:text-gray-400 mb-4 text-sm sm:text-base max-w-prose mx-auto">
-          Febsin adalah perwujudan dari kekuatan karakter dan karya lokal. Kami
-          berkomitmen pada sustainable fashion, mendukung pengrajin lokal, dan
-          menciptakan desain yang edgy serta versatile.
-        </p>
-        <div className="flex justify-center">
-          <svg
-            className="w-48 h-48 sm:w-64 sm:h-64 text-orange-500"
-            viewBox="0 0 100 100"
-          >
-            {/* Radar Chart Simpel (Placeholder) */}
-            <circle
-              cx="50"
-              cy="50"
-              r="40"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            />
-            <line
-              x1="50"
-              y1="10"
-              x2="50"
-              y2="90"
-              stroke="currentColor"
-              strokeWidth="2"
-            />
-            <line
-              x1="10"
-              y1="90"
-              x2="90"
-              y2="90"
-              stroke="currentColor"
-              strokeWidth="2"
-            />
-            <line
-              x1="90"
-              y1="90"
-              x2="10"
-              y2="90"
-              stroke="currentColor"
-              strokeWidth="2"
-            />
-            {/* Data Points (Placeholder) */}
-            <circle cx="50" cy="20" r="3" fill="currentColor" />
-            <circle cx="20" cy="70" r="3" fill="currentColor" />
-            <circle cx="80" cy="70" r="3" fill="currentColor" />
-          </svg>
+      {/* Teaser Produk */}
+      <div className="w-full bg-gray-200 dark:bg-gray-700 py-8">
+        <h3 className="text-xl sm:text-2xl font-bold text-center mb-4 text-black dark:text-white">
+          Teaser Koleksi
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-4xl mx-auto">
+          {teaserProducts.map((product, index) => (
+            <div
+              key={index}
+              className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow"
+            >
+              <div className="w-full h-32 bg-gray-300 dark:bg-gray-600 rounded-lg mb-2"></div>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {product.category}
+              </p>
+              <h4 className="font-bold text-black dark:text-white">
+                {product.name}
+              </h4>
+              <p className="text-orange-500 font-bold mt-1">{product.price}</p>
+            </div>
+          ))}
         </div>
-        <p className="mt-4 text-center text-gray-600 dark:text-gray-400 text-sm sm:text-base">
-          Spektrum Gaya Febsin: Edgy, Versatile, Sustainable, Local.
-        </p>
+      </div>
+
+      {/* Testimonial */}
+      <div className="w-full py-8">
+        <h3 className="text-xl sm:text-2xl font-bold text-center mb-4 text-black dark:text-white">
+          Apa Kata Pelanggan? 
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto">
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+            <p className="text-gray-600 dark:text-gray-400">
+              "Kualitas luar biasa, desain edgy!"
+            </p>
+            <p className="mt-2 font-bold text-black dark:text-white">
+              - Sarah K.
+            </p>
+          </div>
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+            <p className="text-gray-600 dark:text-gray-400">
+              "Sustainable dan stylish, love it!"
+            </p>
+            <p className="mt-2 font-bold text-black dark:text-white">
+              - Andi L.
+            </p>
+          </div>
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+            <p className="text-gray-600 dark:text-gray-400">
+              "Pelayanan cepat, recommended!"
+            </p>
+            <p className="mt-2 font-bold text-black dark:text-white">
+              - Rina S.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
