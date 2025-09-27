@@ -20,6 +20,7 @@ const ProductList = () => {
       oldPrice: "Rp 200.000",
       category: "Casual",
       slug: "kaos-polos-hitam",
+      image: "/images/poloputih2.webp", // Perbaiki path
     },
     {
       id: 2,
@@ -28,6 +29,7 @@ const ProductList = () => {
       oldPrice: "Rp 350.000",
       category: "Smart Casual",
       slug: "kemeja-slim-fit",
+      image: "/images/polohitam1.png", // Perbaiki path
     },
     {
       id: 3,
@@ -36,6 +38,7 @@ const ProductList = () => {
       oldPrice: "Rp 500.000",
       category: "Streetwear",
       slug: "jaket-denim",
+      image: "/images/polohijau3.webp", // Perbaiki path
     },
   ]);
 
@@ -85,7 +88,11 @@ const ProductList = () => {
             key={product.id}
             className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow hover:shadow-lg transition-all duration-300"
           >
-            <div className="w-full h-48 bg-gray-300 dark:bg-gray-600 rounded-lg mb-2"></div>
+            <img
+              src={product.image}
+              alt={product.name}
+              className="w-full h-48 object-cover rounded-lg mb-2"
+            />
             <p className="text-gray-500 dark:text-gray-400 text-sm">
               {product.category}
             </p>
