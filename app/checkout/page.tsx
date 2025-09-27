@@ -17,7 +17,7 @@ export default function Checkout() {
 
   const total = calculateTotal();
   const discountedTotal =
-    form.discountCode === "DISKON20" ? total * 0.8 : total; // Contoh diskon 20% kalau kode benar
+    form.discountCode === "DISKON20" ? total * 0.8 : total;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,9 +38,31 @@ export default function Checkout() {
         Verifikasi Checkout
       </h2>
       <p className="text-center text-gray-600 dark:text-gray-400 mb-6">
-        Total item: {cart.length} | Total Harga: Rp{" "}
-        {discountedTotal.toLocaleString()}
+        Total item: {cart.reduce((sum, p) => sum + p.quantity, 0)} | Total
+        Harga: Rp {discountedTotal.toLocaleString()}
       </p>
+      <div className="max-w-md mx-auto mb-6">
+        <h3 className="font-bold text-black dark:text-white mb-2">
+          Ringkasan Pesanan
+        </h3>
+        {cart.map((product) => (
+          <div
+            key={product.id}
+            className="flex justify-between text-gray-600 dark:text-gray-400"
+          >
+            <span>
+              {product.name} ({product.quantity}x)
+            </span>
+            <span>
+              Rp{" "}
+              {(
+                parseInt(product.price.replace("Rp ", "").replace(".", "")) *
+                product.quantity
+              ).toLocaleString()}
+            </span>
+          </div>
+        ))}
+      </div>
       <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-4">
         <input
           type="text"

@@ -1,59 +1,113 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware"; 
+import { persist } from "zustand/middleware";
+
+// --- DEFINISI TIPE ---
 
 type Product = {
   id: number;
   name: string;
   price: string;
   image: string;
+  quantity: number;
 };
 
-// Definisikan State penuh (termasuk methods)
+// Gunakan Omit untuk fungsi yang menambahkan produk baru, karena quantity akan diset ke 1
+type ProductInput = Omit<Product, "quantity">;
+
+// Definisikan State penuh
 type State = {
   cart: Product[];
-  wishlistCount: number;
-  isDarkMode: boolean;
-  newsletterEmails: string[];
-  addToCart: (product: Product) => void;
+  wishlist: Product[]; // Data yang di-persist
+  wishlistCount: number; // Data yang di-persist
+  isDarkMode: boolean; // Data yang di-persist
+  newsletterEmails: string[]; // Data yang di-persist
+
+  // Method Signatures:
+  addToCart: (product: ProductInput) => void;
   removeFromCart: (id: number) => void;
+  updateQuantity: (id: number, quantity: number) => void;
+  addToWishlist: (product: ProductInput) => void;
+  removeFromWishlist: (id: number) => void;
   calculateTotal: () => number;
-  addToWishlist: () => void;
   toggleDarkMode: () => void;
   addNewsletterEmail: (email: string) => void;
 };
 
-// Definisikan tipe untuk Data yang disimpan (Pick dari State)
+// Definisikan tipe untuk Data yang disimpan (Hanya data, bukan fungsi)
 type PersistedState = Pick<
   State,
-  "cart" | "wishlistCount" | "isDarkMode" | "newsletterEmails"
+  "cart" | "wishlist" | "wishlistCount" | "isDarkMode" | "newsletterEmails"
 >;
 
+// --- STORE IMPLEMENTATION ---
 
-// PERBAIKAN UTAMA: Tambahkan <State> pada create()
 export const useStore = create<State>()(
-  // Hilangkan generic kedua pada persist, biarkan hanya <State>
+  // Gunakan 'persist' tanpa generic <State> di sini, karena sudah ada di create<State>()
   persist(
     (set, get) => ({
       // Inisialisasi State
       cart: [],
+      wishlist: [],
       wishlistCount: 0,
       isDarkMode: true,
       newsletterEmails: [],
-      
+
       // Definisi Methods
       addToCart: (product) =>
-        set((state) => ({ cart: [...state.cart, product] })),
+        set((state) => {
+          const existing = state.cart.find((p) => p.id === product.id);
+          if (existing) {
+            return {
+              cart: state.cart.map((p) =>
+                p.id === product.id ? { ...p, quantity: p.quantity + 1 } : p
+              ),
+            };
+          }
+          return { cart: [...state.cart, { ...product, quantity: 1 }] };
+        }),
+
       removeFromCart: (id) =>
         set((state) => ({ cart: state.cart.filter((p) => p.id !== id) })),
+
+      updateQuantity: (id, quantity) =>
+        set((state) => ({
+          cart: state.cart.map((p) =>
+            // Fix: Minimal 1, Max 10 (jika diinginkan)
+            p.id === id
+              ? { ...p, quantity: Math.max(1, Math.min(10, quantity)) }
+              : p
+          ),
+        })), // <-- SINTAKS SUDAH BENAR DI SINI
+
+      addToWishlist: (product) =>
+        set((state) => {
+          // Gunakan product input, tetapkan quantity ke 1 jika belum ada
+          const existing = state.wishlist.find((p) => p.id === product.id);
+          if (existing) return state;
+          return {
+            wishlist: [...state.wishlist, { ...product, quantity: 1 }],
+            wishlistCount: state.wishlistCount + 1,
+          };
+        }),
+
+      removeFromWishlist: (id) =>
+        set((state) => ({
+          wishlist: state.wishlist.filter((p) => p.id !== id),
+          wishlistCount: state.wishlist.find((p) => p.id === id)
+            ? state.wishlistCount - 1
+            : state.wishlistCount, // Kurangi hitungan hanya jika item ditemukan
+        })),
+
       calculateTotal: () =>
         get().cart.reduce(
           (total, p) =>
-            total + parseInt(p.price.replace("Rp ", "").replace(".", "")),
+            total +
+            parseInt(p.price.replace("Rp ", "").replace(".", "")) * p.quantity,
           0
         ),
-      addToWishlist: () =>
-        set((state) => ({ wishlistCount: state.wishlistCount + 1 })),
+
       toggleDarkMode: () => set((state) => ({ isDarkMode: !state.isDarkMode })),
+
       addNewsletterEmail: (email) =>
         set((state) => ({
           newsletterEmails: [...state.newsletterEmails, email],
@@ -61,14 +115,15 @@ export const useStore = create<State>()(
     }),
     {
       name: "febsin-store",
-      // Gunakan partialize dan Type Assertion yang telah disiapkan
-      partialize: (state) => 
-        ({
-          cart: state.cart,
-          wishlistCount: state.wishlistCount,
-          isDarkMode: state.isDarkMode,
-          newsletterEmails: state.newsletterEmails,
-        } as PersistedState), // Gunakan PersistedState
-    }
+      // partialize hanya mengembalikan data yang disetujui di PersistedState
+      partialize: (state) => ({
+        cart: state.cart,
+        wishlist: state.wishlist, // Tambahkan wishlist ke partialize
+        wishlistCount: state.wishlistCount,
+        isDarkMode: state.isDarkMode,
+        newsletterEmails: state.newsletterEmails,
+      }),
+      // HILANGKAN 'as PersistedState' dan gunakan 'as const' untuk stabilitas
+    } as const
   )
 );

@@ -3,10 +3,10 @@
 import { useStore } from "@/lib/store";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { FaTrash } from "react-icons/fa"; // Ikon hapus dari react-icons
+import { FaTrash } from "react-icons/fa";
 
 export default function Keranjang() {
-  const { cart, removeFromCart, calculateTotal } = useStore();
+  const { cart, removeFromCart, updateQuantity, calculateTotal } = useStore();
   const router = useRouter();
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
 
@@ -16,11 +16,16 @@ export default function Keranjang() {
     );
   };
 
+  const handleQuantityChange = (id: number, quantity: number) => {
+    updateQuantity(id, quantity);
+  };
+
   const selectedTotal = cart
     .filter((p) => selectedItems.includes(p.id))
     .reduce(
       (total, p) =>
-        total + parseInt(p.price.replace("Rp ", "").replace(".", "")),
+        total +
+        parseInt(p.price.replace("Rp ", "").replace(".", "")) * p.quantity,
       0
     );
 
@@ -67,7 +72,32 @@ export default function Keranjang() {
                 <h3 className="font-bold text-black dark:text-white">
                   {product.name}
                 </h3>
-                <p className="text-orange-500">{product.price}</p>
+                <p className="text-orange-500">
+                  {product.price} x {product.quantity}
+                </p>
+                <div className="flex items-center mt-2 space-x-2">
+                  <button
+                    onClick={() =>
+                      handleQuantityChange(product.id, product.quantity - 1)
+                    }
+                    className="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded text-black dark:text-white"
+                    disabled={product.quantity <= 1}
+                  >
+                    -
+                  </button>
+                  <span className="text-black dark:text-white">
+                    {product.quantity}
+                  </span>
+                  <button
+                    onClick={() =>
+                      handleQuantityChange(product.id, product.quantity + 1)
+                    }
+                    className="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded text-black dark:text-white"
+                    disabled={product.quantity >= 10}
+                  >
+                    +
+                  </button>
+                </div>
               </div>
               <button
                 onClick={() => removeFromCart(product.id)}
@@ -82,7 +112,7 @@ export default function Keranjang() {
           </p>
           <button
             onClick={handleCheckout}
-            className="w-full bg-orange-500 text-white px-6 py-2 rounded text-base hover:bg-orange-600 transition-colors duration-300 hover:scale-105"
+            className="w-full bg-orange-500 text-white px-6 py-2 rounded text-sm hover:bg-orange-600 transition-colors duration-300 hover:scale-105"
           >
             Checkout
           </button>
