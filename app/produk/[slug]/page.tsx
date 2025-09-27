@@ -14,7 +14,7 @@ export default function ProductDetail() {
       price: "Rp 150.000",
       category: "Casual",
       slug: "kaos-polos-hitam",
-      image: "/images/poloputih2.webp",
+      image: "/images/polohijau3.webp",
     },
     {
       id: 2,
@@ -30,7 +30,7 @@ export default function ProductDetail() {
       price: "Rp 450.000",
       category: "Streetwear",
       slug: "jaket-denim",
-      image: "/images/polohijau3.webp",
+      image: "/images/poloputih2.webp",
     },
   ];
   const product = products.find((p) => p.slug === slug);

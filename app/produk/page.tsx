@@ -20,7 +20,7 @@ const ProductList = () => {
       oldPrice: "Rp 200.000",
       category: "Casual",
       slug: "kaos-polos-hitam",
-      image: "public/images/poloputih2.webp",
+      image: "/images/poloputih2.webp",
     },
     {
       id: 2,
@@ -29,7 +29,7 @@ const ProductList = () => {
       oldPrice: "Rp 350.000",
       category: "Smart Casual",
       slug: "kemeja-slim-fit",
-      image: "public/images/polohitam1.png",
+      image: "/images/polohitam1.png",
     },
     {
       id: 3,
@@ -38,7 +38,7 @@ const ProductList = () => {
       oldPrice: "Rp 500.000",
       category: "Streetwear",
       slug: "jaket-denim",
-      image: "public/images/polohijau3.webp",
+      image: "/images/polohijau3.webp",
     },
   ]);
 
