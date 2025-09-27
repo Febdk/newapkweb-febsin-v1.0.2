@@ -48,12 +48,16 @@ export const useStore = create(
     }),
     {
       name: "febsin-store",
-      partialize: (state) => ({
-        cart: state.cart,
-        wishlistCount: state.wishlistCount,
-        isDarkMode: state.isDarkMode,
-        newsletterEmails: state.newsletterEmails,
-      }), // Tanpa tipe eksplisit, biar TypeScript infer
+      partialize: (state) =>
+        ({
+          cart: state.cart,
+          wishlistCount: state.wishlistCount,
+          isDarkMode: state.isDarkMode,
+          newsletterEmails: state.newsletterEmails,
+        } as Pick<
+          State,
+          "cart" | "wishlistCount" | "isDarkMode" | "newsletterEmails"
+        >), // Pastikan semua properti data ada
     }
   )
 );
