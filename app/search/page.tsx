@@ -2,6 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { Suspense } from "react";
 
 // Definisikan tipe untuk hasil pencarian
 interface SearchResult {
@@ -9,7 +10,7 @@ interface SearchResult {
   description: string;
 }
 
-export default function Search() {
+const SearchContent = () => {
   const searchParams = useSearchParams();
   const query = searchParams.get("q") || "";
   const [results] = useState<SearchResult[]>([
@@ -60,5 +61,19 @@ export default function Search() {
         )}
       </div>
     </div>
+  );
+};
+
+export default function Search() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex justify-center items-center h-screen text-black dark:text-white">
+          Memuat hasil pencarian...
+        </div>
+      }
+    >
+      <SearchContent />
+    </Suspense>
   );
 }
