@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist } from "zustand/middleware"; 
 
 type Product = {
   id: number;
@@ -8,6 +8,7 @@ type Product = {
   image: string;
 };
 
+// Definisikan State penuh (termasuk methods)
 type State = {
   cart: Product[];
   wishlistCount: number;
@@ -21,13 +22,25 @@ type State = {
   addNewsletterEmail: (email: string) => void;
 };
 
-export const useStore = create(
-  persist<State>(
+// Definisikan tipe untuk Data yang disimpan (Pick dari State)
+type PersistedState = Pick<
+  State,
+  "cart" | "wishlistCount" | "isDarkMode" | "newsletterEmails"
+>;
+
+
+// PERBAIKAN UTAMA: Tambahkan <State> pada create()
+export const useStore = create<State>()(
+  // Hilangkan generic kedua pada persist, biarkan hanya <State>
+  persist(
     (set, get) => ({
+      // Inisialisasi State
       cart: [],
       wishlistCount: 0,
       isDarkMode: true,
       newsletterEmails: [],
+      
+      // Definisi Methods
       addToCart: (product) =>
         set((state) => ({ cart: [...state.cart, product] })),
       removeFromCart: (id) =>
@@ -48,16 +61,14 @@ export const useStore = create(
     }),
     {
       name: "febsin-store",
-      partialize: (state) =>
+      // Gunakan partialize dan Type Assertion yang telah disiapkan
+      partialize: (state) => 
         ({
           cart: state.cart,
           wishlistCount: state.wishlistCount,
           isDarkMode: state.isDarkMode,
           newsletterEmails: state.newsletterEmails,
-        } as Pick<
-          State,
-          "cart" | "wishlistCount" | "isDarkMode" | "newsletterEmails"
-        >), // Pastikan semua properti data ada
+        } as PersistedState), // Gunakan PersistedState
     }
   )
 );
