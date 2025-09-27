@@ -1,111 +1,71 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useStore } from "@/lib/store";
 import { toast } from "react-toastify";
 
-export default function Produk() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+export default function ProductDetail() {
   const { addToCart } = useStore();
-  const [activeCategory, setActiveCategory] = useState(
-    searchParams.get("category") || "Semua"
-  );
-  const [products] = useState([
+  const { slug } = useParams();
+  const products = [
     {
       id: 1,
       name: "Kaos Polos Hitam",
       price: "Rp 150.000",
-      oldPrice: "Rp 200.000",
       category: "Casual",
       slug: "kaos-polos-hitam",
+      image: "/images/poloputih2.webp",
     },
     {
       id: 2,
       name: "Kemeja Slim Fit",
       price: "Rp 300.000",
-      oldPrice: "Rp 350.000",
       category: "Smart Casual",
       slug: "kemeja-slim-fit",
+      image: "/images/polohitam1.png",
     },
     {
       id: 3,
       name: "Jaket Denim",
       price: "Rp 450.000",
-      oldPrice: "Rp 500.000",
       category: "Streetwear",
       slug: "jaket-denim",
+      image: "/images/polohijau3.webp",
     },
-  ]);
+  ];
+  const product = products.find((p) => p.slug === slug);
 
-  const filteredProducts =
-    activeCategory === "Semua"
-      ? products
-      : products.filter((p) => p.category === activeCategory);
+  if (!product)
+    return <div className="py-8 px-4 text-center">Produk tidak ditemukan</div>;
 
-  const handleAddToCart = (product: any) => {
-    addToCart();
+  const handleAddToCart = () => {
+    addToCart(product);
     toast.success(`${product.name} ditambahkan ke keranjang!`);
   };
 
-  useEffect(() => {
-    setActiveCategory(searchParams.get("category") || "Semua");
-  }, [searchParams]);
-
   return (
     <div className="py-8 px-2 sm:px-4">
-      <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-4 text-black dark:text-white">
-        KOLEKSI TOPS FEBSIN
-      </h2>
-      <p className="text-center text-gray-600 dark:text-gray-400 mb-6 text-sm sm:text-base max-w-prose mx-auto">
-        Jelajahi koleksi tops kami yang dirancang untuk menggabungkan gaya
-        modern dengan nilai lokal Indonesia.
-      </p>
-      <div className="flex flex-wrap justify-center space-x-2 mb-6">
-        {["Semua", "Casual", "Smart Casual", "Streetwear"].map((category) => (
+      <div className="container mx-auto max-w-2xl">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+          <img
+            src={product.image}
+            alt={product.name}
+            className="w-full h-64 object-cover rounded-lg mb-4"
+          />
+          <p className="text-gray-500 dark:text-gray-400 text-sm">
+            {product.category}
+          </p>
+          <h2 className="text-2xl font-bold text-black dark:text-white">
+            {product.name}
+          </h2>
+          <p className="text-orange-500 font-bold mt-2">{product.price}</p>
           <button
-            key={category}
-            onClick={() => {
-              router.push(`/produk?category=${category}`);
-            }}
-            className={`px-3 py-1 rounded-full text-sm ${
-              activeCategory === category
-                ? "bg-orange-500 text-white"
-                : "bg-gray-200 dark:bg-gray-700 text-black dark:text-white"
-            } hover:bg-orange-600 transition-colors duration-300 hover:scale-105`}
+            onClick={handleAddToCart}
+            className="mt-4 w-full bg-orange-500 text-white px-4 py-2 rounded text-sm hover:bg-orange-600 transition-colors duration-300 hover:scale-105"
           >
-            {category}
+            Tambah ke Keranjang
           </button>
-        ))}
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {filteredProducts.map((product) => (
-          <div
-            key={product.id}
-            className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow hover:shadow-lg transition-all duration-300"
-          >
-            <div className="w-full h-48 bg-gray-300 dark:bg-gray-600 rounded-lg mb-2"></div>
-            <p className="text-gray-500 dark:text-gray-400 text-sm">
-              {product.category}
-            </p>
-            <h3 className="text-lg font-bold text-black dark:text-white">
-              {product.name}
-            </h3>
-            <div className="flex space-x-2 mt-2">
-              <span className="text-orange-500 font-bold">{product.price}</span>
-              <span className="text-gray-500 dark:text-gray-400 line-through">
-                {product.oldPrice}
-              </span>
-            </div>
-            <button
-              onClick={() => handleAddToCart(product)}
-              className="mt-4 w-full bg-orange-500 text-white px-3 py-2 rounded text-sm hover:bg-orange-600 transition-colors duration-300 hover:scale-105"
-            >
-              Tambah ke Keranjang
-            </button>
-          </div>
-        ))}
+        </div>
       </div>
     </div>
   );

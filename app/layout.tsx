@@ -12,7 +12,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { isDarkMode, toggleDarkMode, cartCount } = useStore();
+  const { isDarkMode, toggleDarkMode, cart } = useStore(); // Ganti cartCount dengan cart
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -48,113 +48,54 @@ export default function RootLayout({
               <a href="/kontak" className="hover:text-orange-500 px-1">
                 Kontak
               </a>
+              {/* Tambah link keranjang kalau perlu */}
             </nav>
-            <div className="flex space-x-1 sm:space-x-4 items-center">
+            <div className="flex items-center space-x-2">
               <input
                 type="text"
-                placeholder="Cari..."
                 value={searchQuery}
                 onChange={handleSearch}
-                className="bg-gray-200 dark:bg-gray-700 p-1 sm:p-2 rounded-lg text-black dark:text-white w-20 sm:w-auto transition-colors duration-300"
+                placeholder="Cari produk..."
+                className="bg-gray-200 dark:bg-gray-700 p-1 sm:p-2 rounded-lg text-sm transition-colors duration-300"
               />
               <button
                 onClick={toggleDarkMode}
-                className="text-black dark:text-white text-xl hover:scale-105 transition-transform duration-200"
+                className="text-black dark:text-white"
               >
-                {isDarkMode ? "🌙" : "☀️"}
+                {isDarkMode ? "☀️" : "🌙"}
               </button>
-              <div
-                className="relative"
-                onClick={() => router.push("/keranjang")}
-              >
-                <span className="bg-orange-500 text-white rounded-full w-2 h-2 flex items-center justify-center text-[8px] absolute -top-1 -right-1">
-                  {cartCount}
-                </span>
-                <svg
-                  className="w-4 sm:w-6 h-4 sm:h-6 text-black dark:text-white transition-colors duration-300"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
-                </svg>
-              </div>
             </div>
           </div>
         </header>
 
         {/* Main Content */}
-        <main className="flex-grow pt-16 pb-16">{children}</main>
+        <main className="flex-grow pt-16">{children}</main>
 
         {/* Footer */}
-        <footer className="bg-gray-200 dark:bg-gray-800 py-4 sm:py-8 px-2 sm:px-4 transition-colors duration-300">
-          <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4">
-            <div>
-              <h4 className="font-bold mb-1 text-sm sm:text-base">Febsin</h4>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">
-                Fashion dengan Karakter Kuat
-              </p>
-              <div className="flex space-x-1 mt-1">
-                <a
-                  href="https://instagram.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-black dark:text-white"
-                >
-                  I
-                </a>
-                <a
-                  href="https://facebook.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-black dark:text-white"
-                >
-                  F
-                </a>
-                <a
-                  href="https://twitter.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-black dark:text-white"
-                >
-                  T
-                </a>
-                <a
-                  href="https://tiktok.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-black dark:text-white"
-                >
-                  T
-                </a>
-              </div>
-            </div>
+        <footer className="bg-white dark:bg-gray-800 text-black dark:text-white py-4 px-2 sm:px-4 mt-auto">
+          <div className="container mx-auto grid grid-cols-1 sm:grid-cols-3 gap-4 text-center sm:text-left">
             <div>
               <h4 className="font-bold mb-1 text-sm sm:text-base">
-                Menu Utama
+                Tentang Kami
               </h4>
-              {["Home", "Produk", "Tentang Kami", "Blog", "Kontak"].map(
-                (link) => (
-                  <a
-                    key={link}
-                    href={`/${link.toLowerCase().replace(" ", "-")}`}
-                    className="block text-gray-600 dark:text-gray-400 text-sm hover:text-orange-500 transition-colors duration-300"
-                  >
-                    {link}
-                  </a>
-                )
-              )}
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                Febsin adalah brand fashion lokal yang menggabungkan modernitas
+                dan nilai budaya Indonesia.
+              </p>
             </div>
             <div>
               <h4 className="font-bold mb-1 text-sm sm:text-base">Kategori</h4>
-              {["Casual", "Smart Casual", "Chic", "Streetwear"].map((cat) => (
-                <a
-                  key={cat}
-                  href={`/produk?category=${cat}`}
-                  className="block text-gray-600 dark:text-gray-400 text-sm hover:text-orange-500 transition-colors duration-300"
-                >
-                  {cat}
-                </a>
-              ))}
+              <div className="space-y-1">
+                {["Casual", "Smart Casual", "Streetwear"].map((cat) => (
+                  <a
+                    key={cat}
+                    href={`/produk?category=${cat}`}
+                    className="block text-gray-600 dark:text-gray-400 hover:text-orange-500"
+                  >
+                    {cat}
+                  </a>
+                ))}
+              </div>
             </div>
             <div>
               <h4 className="font-bold mb-1 text-sm sm:text-base">
@@ -211,4 +152,3 @@ export default function RootLayout({
     </html>
   );
 }
-  

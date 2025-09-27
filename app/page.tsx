@@ -5,10 +5,21 @@ import { useRouter } from "next/navigation";
 import { useStore } from "@/lib/store";
 import { toast } from "react-toastify";
 
+type TeaserProduct = {
+  name: string;
+  price: string;
+  category: string;
+};
+
 export default function Home() {
-  const { addToCart } = useStore();
+  const { addToCart, cart } = useStore();
   const router = useRouter();
   const [promoVisible, setPromoVisible] = useState(false);
+  const teaserProducts: TeaserProduct[] = [
+    // Definisi teaserProducts dengan tipe
+    { name: "Kaos Polos Hitam", price: "Rp 150.000", category: "Casual" },
+    { name: "Kemeja Slim Fit", price: "Rp 300.000", category: "Smart Casual" },
+  ];
 
   useEffect(() => {
     const timer = setTimeout(() => setPromoVisible(true), 2000);
@@ -16,15 +27,24 @@ export default function Home() {
   }, []);
 
   const handleBuyNow = () => {
-    addToCart();
-    toast.success("Produk ditambahkan ke keranjang!");
-    router.push("/produk");
+    if (cart.length === 0) {
+      toast.warning(
+        "Ups anda belum menambahkan produk! Lihat koleksi terlebih dahulu.",
+        {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          onClose: () => router.push("/produk"),
+        }
+      );
+    } else {
+      router.push("/keranjang");
+    }
   };
-
-  const teaserProducts = [
-    { name: "Kaos Polos Hitam", price: "Rp 150.000", category: "Casual" },
-    { name: "Kemeja Slim Fit", price: "Rp 300.000", category: "Smart Casual" },
-  ];
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-start text-center px-2 sm:px-4 pt-16">
@@ -66,28 +86,35 @@ export default function Home() {
           Teaser Koleksi
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-4xl mx-auto">
-          {teaserProducts.map((product, index) => (
-            <div
-              key={index}
-              className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow"
-            >
-              <div className="w-full h-32 bg-gray-300 dark:bg-gray-600 rounded-lg mb-2"></div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {product.category}
-              </p>
-              <h4 className="font-bold text-black dark:text-white">
-                {product.name}
-              </h4>
-              <p className="text-orange-500 font-bold mt-1">{product.price}</p>
-            </div>
-          ))}
+          {teaserProducts.map(
+            (
+              product: TeaserProduct,
+              index: number // Tipekan product dan index
+            ) => (
+              <div
+                key={index}
+                className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow"
+              >
+                <div className="w-full h-32 bg-gray-300 dark:bg-gray-600 rounded-lg mb-2"></div>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {product.category}
+                </p>
+                <h4 className="font-bold text-black dark:text-white">
+                  {product.name}
+                </h4>
+                <p className="text-orange-500 font-bold mt-1">
+                  {product.price}
+                </p>
+              </div>
+            )
+          )}
         </div>
       </div>
 
       {/* Testimonial */}
       <div className="w-full py-8">
         <h3 className="text-xl sm:text-2xl font-bold text-center mb-4 text-black dark:text-white">
-          Apa Kata Pelanggan? 
+          Apa Kata Pelanggan
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto">
           <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">

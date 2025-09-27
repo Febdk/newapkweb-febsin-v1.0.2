@@ -20,7 +20,7 @@ const ProductList = () => {
       oldPrice: "Rp 200.000",
       category: "Casual",
       slug: "kaos-polos-hitam",
-      image: "/images/poloputih2.webp", // Perbaiki path
+      image: "public/images/poloputih2.webp",
     },
     {
       id: 2,
@@ -29,7 +29,7 @@ const ProductList = () => {
       oldPrice: "Rp 350.000",
       category: "Smart Casual",
       slug: "kemeja-slim-fit",
-      image: "/images/polohitam1.png", // Perbaiki path
+      image: "public/images/polohitam1.png",
     },
     {
       id: 3,
@@ -38,7 +38,7 @@ const ProductList = () => {
       oldPrice: "Rp 500.000",
       category: "Streetwear",
       slug: "jaket-denim",
-      image: "/images/polohijau3.webp", // Perbaiki path
+      image: "public/images/polohijau3.webp",
     },
   ]);
 
@@ -48,7 +48,7 @@ const ProductList = () => {
       : products.filter((p) => p.category === activeCategory);
 
   const handleAddToCart = (product: any) => {
-    addToCart();
+    addToCart(product); // Tambah object product, bukan cuma increment count
     toast.success(`${product.name} ditambahkan ke keranjang!`);
   };
 
