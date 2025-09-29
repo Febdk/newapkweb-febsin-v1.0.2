@@ -6,20 +6,22 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { FaShoppingCart, FaHeart } from "react-icons/fa";
+import Link from "next/link";
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { isDarkMode, toggleDarkMode, cart } = useStore(); // Ganti cartCount dengan cart
+  const { isDarkMode, toggleDarkMode, cart, wishlist } = useStore();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-    if (e.target.value) {
-      router.push(`/search?q=${e.target.value}`);
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery) {
+      router.push(`/search?q=${searchQuery}`);
     }
   };
 
@@ -27,40 +29,76 @@ export default function RootLayout({
     <html lang="id" className={isDarkMode ? "dark" : ""}>
       <body className="bg-gray-100 dark:bg-gray-900 text-black dark:text-white font-sans min-h-screen flex flex-col transition-colors duration-300">
         {/* Navbar */}
-        <header className="fixed top-0 w-full bg-white dark:bg-gray-800 z-50 shadow-md px-2 sm:px-4 transition-colors duration-300">
-          <div className="container mx-auto py-2 sm:py-4 flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
-            <div className="text-lg sm:text-2xl font-bold text-orange-500">
+        <header className="fixed top-0 w-full bg-white dark:bg-gray-800 p-4 shadow-md z-10">
+          <div className="container mx-auto flex justify-between items-center">
+            <Link href="/" className="text-xl font-bold text-orange-500">
               Febsin
-            </div>
-            <nav className="flex flex-wrap justify-center space-x-1 sm:space-x-4 text-xs sm:text-base">
-              <a href="/" className="hover:text-orange-500 px-1">
+            </Link>
+            <div className="flex space-x-4 items-center">
+              <Link
+                href="/"
+                className="text-black dark:text-white hover:text-orange-500"
+              >
                 Home
-              </a>
-              <a href="/produk" className="hover:text-orange-500 px-1">
+              </Link>
+              <Link
+                href="/produk"
+                className="text-black dark:text-white hover:text-orange-500"
+              >
                 Produk
-              </a>
-              <a href="/tentang-kami" className="hover:text-orange-500 px-1">
+              </Link>
+              <Link
+                href="/tentang-kami"
+                className="text-black dark:text-white hover:text-orange-500"
+              >
                 Tentang Kami
-              </a>
-              <a href="/blog" className="hover:text-orange-500 px-1">
+              </Link>
+              <Link
+                href="/blog"
+                className="text-black dark:text-white hover:text-orange-500"
+              >
                 Blog
-              </a>
-              <a href="/kontak" className="hover:text-orange-500 px-1">
+              </Link>
+              <Link
+                href="/kontak"
+                className="text-black dark:text-white hover:text-orange-500"
+              >
                 Kontak
-              </a>
-              {/* Tambah link keranjang kalau perlu */}
-            </nav>
-            <div className="flex items-center space-x-2">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={handleSearch}
-                placeholder="Cari produk..."
-                className="bg-gray-200 dark:bg-gray-700 p-1 sm:p-2 rounded-lg text-sm transition-colors duration-300"
-              />
+              </Link>
+              <Link
+                href="/keranjang"
+                className="relative text-black dark:text-white hover:text-orange-500"
+              >
+                <FaShoppingCart size={20} />
+                {cart.reduce((sum, p) => sum + p.quantity, 0) > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-orange-500 text-white rounded-full px-1 text-xs">
+                    {cart.reduce((sum, p) => sum + p.quantity, 0)}
+                  </span>
+                )}
+              </Link>
+              <Link
+                href="/wishlist"
+                className="relative text-black dark:text-white hover:text-orange-500"
+              >
+                <FaHeart size={20} />
+                {wishlist.length > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full px-1 text-xs">
+                    {wishlist.length}
+                  </span>
+                )}
+              </Link>
+              <form onSubmit={handleSearch} className="flex items-center">
+                <input
+                  type="text"
+                  placeholder="Cari..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="bg-gray-200 dark:bg-gray-700 p-1 rounded-lg text-sm w-32 sm:w-48 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                />
+              </form>
               <button
                 onClick={toggleDarkMode}
-                className="text-black dark:text-white"
+                className="text-black dark:text-white text-xl"
               >
                 {isDarkMode ? "☀️" : "🌙"}
               </button>
@@ -126,7 +164,7 @@ export default function RootLayout({
               Kebijakan Privasi
             </a>{" "}
             |{" "}
-            <a href="/syarat-dan-ketentuan" className="underline">
+            <a href="/syarat-dan-kententuan" className="underline">
               Syarat & Ketentuan
             </a>{" "}
             |{" "}

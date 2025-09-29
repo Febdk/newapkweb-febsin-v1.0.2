@@ -4,11 +4,13 @@ import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useStore } from "@/lib/store";
 import { toast } from "react-toastify";
+import { FaHeart } from "react-icons/fa";
+import Link from "next/link"; // Tambah import ini buat navigasi
 
 const ProductList = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { addToCart } = useStore();
+  const { addToCart, addToWishlist, wishlist } = useStore();
   const [activeCategory, setActiveCategory] = useState(
     searchParams.get("category") || "Semua"
   );
@@ -40,6 +42,7 @@ const ProductList = () => {
       slug: "jaket-denim",
       image: "/images/polohijau3.webp",
     },
+    
   ]);
 
   const filteredProducts =
@@ -48,8 +51,16 @@ const ProductList = () => {
       : products.filter((p) => p.category === activeCategory);
 
   const handleAddToCart = (product: any) => {
-    addToCart(product); // Tambah object product, bukan cuma increment count
+    addToCart(product);
     toast.success(`${product.name} ditambahkan ke keranjang!`);
+  };
+
+  const handleAddToWishlist = (product: any) => {
+    const isInWishlist = wishlist.some((p) => p.id === product.id);
+    if (!isInWishlist) {
+      addToWishlist(product);
+      toast.success(`${product.name} ditambahkan ke wishlist!`);
+    }
   };
 
   useEffect(() => {
@@ -83,36 +94,59 @@ const ProductList = () => {
         ))}
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {filteredProducts.map((product) => (
-          <div
-            key={product.id}
-            className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow hover:shadow-lg transition-all duration-300"
-          >
-            <img
-              src={product.image}
-              alt={product.name}
-              className="w-full h-48 object-cover rounded-lg mb-2"
-            />
-            <p className="text-gray-500 dark:text-gray-400 text-sm">
-              {product.category}
-            </p>
-            <h3 className="text-lg font-bold text-black dark:text-white">
-              {product.name}
-            </h3>
-            <div className="flex space-x-2 mt-2">
-              <span className="text-orange-500 font-bold">{product.price}</span>
-              <span className="text-gray-500 dark:text-gray-400 line-through">
-                {product.oldPrice}
-              </span>
-            </div>
-            <button
-              onClick={() => handleAddToCart(product)}
-              className="mt-4 w-full bg-orange-500 text-white px-3 py-2 rounded text-sm hover:bg-orange-600 transition-colors duration-300 hover:scale-105"
+        {filteredProducts.map((product) => {
+          const isInWishlist = wishlist.some((p) => p.id === product.id);
+          return (
+            <div
+              key={product.id}
+              className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow hover:shadow-lg transition-all duration-300"
             >
-              Tambah ke Keranjang
-            </button>
-          </div>
-        ))}
+              <Link href={`/produk/${product.slug}`}>
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-48 object-cover rounded-lg mb-2 cursor-pointer hover:opacity-90"
+                />
+              </Link>
+              <p className="text-gray-500 dark:text-gray-400 text-sm">
+                {product.category}
+              </p>
+              <Link href={`/produk/${product.slug}`}>
+                <h3 className="text-lg font-bold text-black dark:text-white hover:text-orange-500 cursor-pointer">
+                  {product.name}
+                </h3>
+              </Link>
+              <div className="flex space-x-2 mt-2">
+                <span className="text-orange-500 font-bold">
+                  {product.price}
+                </span>
+                <span className="text-gray-500 dark:text-gray-400 line-through">
+                  {product.oldPrice}
+                </span>
+              </div>
+              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 mt-4">
+                <button
+                  onClick={() => handleAddToCart(product)}
+                  className="w-full sm:w-auto bg-orange-500 text-white px-3 py-2 rounded text-sm hover:bg-orange-600 transition-colors duration-300 hover:scale-105"
+                >
+                  Tambah ke Keranjang
+                </button>
+                <button
+                  onClick={() => handleAddToWishlist(product)}
+                  className={`w-full sm:w-auto px-3 py-2 rounded text-sm ${
+                    isInWishlist
+                      ? "bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                      : "bg-red-500 text-white hover:bg-red-600 transition-colors duration-300 hover:scale-105"
+                  }`}
+                  disabled={isInWishlist}
+                >
+                  <FaHeart className="inline mr-1" />{" "}
+                  {isInWishlist ? "Sudah di Wishlist" : "Tambah ke Wishlist"}
+                </button>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

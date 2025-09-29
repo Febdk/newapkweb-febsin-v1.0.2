@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useStore } from "@/lib/store";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { FaShoppingCart, FaHeart } from "react-icons/fa";
+import Link from 'next/link';
+import { useStore } from '@/lib/store';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { FaShoppingCart, FaHeart } from 'react-icons/fa';
 
 export default function Navbar() {
   const { cart, wishlist, toggleDarkMode, isDarkMode } = useStore();
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,40 +25,22 @@ export default function Navbar() {
           Febsin
         </Link>
         <div className="flex space-x-4 items-center">
-          <Link
-            href="/"
-            className="text-black dark:text-white hover:text-orange-500"
-          >
+          <Link href="/" className="text-black dark:text-white hover:text-orange-500">
             Home
           </Link>
-          <Link
-            href="/produk"
-            className="text-black dark:text-white hover:text-orange-500"
-          >
+          <Link href="/produk" className="text-black dark:text-white hover:text-orange-500">
             Produk
           </Link>
-          <Link
-            href="/tentang-kami"
-            className="text-black dark:text-white hover:text-orange-500"
-          >
+          <Link href="/tentang-kami" className="text-black dark:text-white hover:text-orange-500">
             Tentang Kami
           </Link>
-          <Link
-            href="/blog"
-            className="text-black dark:text-white hover:text-orange-500"
-          >
+          <Link href="/blog" className="text-black dark:text-white hover:text-orange-500">
             Blog
           </Link>
-          <Link
-            href="/kontak"
-            className="text-black dark:text-white hover:text-orange-500"
-          >
+          <Link href="/kontak" className="text-black dark:text-white hover:text-orange-500">
             Kontak
           </Link>
-          <Link
-            href="/keranjang"
-            className="relative text-black dark:text-white hover:text-orange-500"
-          >
+          <Link href="/keranjang" className="relative text-black dark:text-white hover:text-orange-500">
             <FaShoppingCart size={20} />
             {cart.reduce((sum, p) => sum + p.quantity, 0) > 0 && (
               <span className="absolute -top-2 -right-2 bg-orange-500 text-white rounded-full px-1 text-xs">
@@ -66,10 +48,7 @@ export default function Navbar() {
               </span>
             )}
           </Link>
-          <Link
-            href="/wishlist"
-            className="relative text-black dark:text-white hover:text-orange-500"
-          >
+          <Link href="/wishlist" className="relative text-black dark:text-white hover:text-orange-500">
             <FaHeart size={20} />
             {wishlist.length > 0 && (
               <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full px-1 text-xs">
@@ -83,14 +62,14 @@ export default function Navbar() {
               placeholder="Cari..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-gray-200 dark:bg-gray-700 p-1 rounded-lg text-sm"
+              className="bg-gray-200 dark:bg-gray-700 p-1 rounded-lg text-sm w-32 sm:w-48 focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
           </form>
           <button
             onClick={toggleDarkMode}
             className="text-black dark:text-white text-xl"
           >
-            {isDarkMode ? "☀️" : "🌙"}
+            {isDarkMode ? '☀️' : '🌙'}
           </button>
         </div>
       </div>

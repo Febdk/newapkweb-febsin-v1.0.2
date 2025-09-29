@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import { useStore } from "@/lib/store";
 import { toast } from "react-toastify";
 import Image from "next/image";
-import { FaHeart } from "react-icons/fa";
+import { FaHeart } from "react-icons/fa"; // Pastikan import ini ada
 
 export default function ProductDetail() {
   const { addToCart, addToWishlist, wishlist } = useStore();
@@ -84,16 +84,16 @@ export default function ProductDetail() {
             {product.name}
           </h2>
           <p className="text-orange-500 font-bold mt-2">{product.price}</p>
-          <div className="flex space-x-2 mt-4">
+          <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 mt-4">
             <button
               onClick={handleAddToCart}
-              className="flex-1 bg-orange-500 text-white px-4 py-2 rounded text-sm hover:bg-orange-600 transition-colors duration-300 hover:scale-105"
+              className="w-full sm:w-auto bg-orange-500 text-white px-4 py-2 rounded text-sm hover:bg-orange-600 transition-colors duration-300 hover:scale-105"
             >
               Tambah ke Keranjang
             </button>
             <button
               onClick={handleAddToWishlist}
-              className={`px-4 py-2 rounded text-sm ${
+              className={`w-full sm:w-auto px-4 py-2 rounded text-sm ${
                 isInWishlist
                   ? "bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
                   : "bg-red-500 text-white hover:bg-red-600 transition-colors duration-300 hover:scale-105"
