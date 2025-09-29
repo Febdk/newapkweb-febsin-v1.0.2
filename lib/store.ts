@@ -1,8 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-// --- DEFINISI TIPE ---
-
 type Product = {
   id: number;
   name: string;
@@ -11,16 +9,16 @@ type Product = {
   quantity: number;
 };
 
-// Gunakan Omit untuk fungsi yang menambahkan produk baru, karena quantity akan diset ke 1
+// Gunakan Omit untuk fungsi yang menambahkan produk baru
 type ProductInput = Omit<Product, "quantity">;
 
 // Definisikan State penuh
 type State = {
   cart: Product[];
-  wishlist: Product[]; // Data yang di-persist
-  wishlistCount: number; // Data yang di-persist
-  isDarkMode: boolean; // Data yang di-persist
-  newsletterEmails: string[]; // Data yang di-persist
+  wishlist: Product[];
+  wishlistCount: number;
+  isDarkMode: boolean;
+  newsletterEmails: string[];
 
   // Method Signatures:
   addToCart: (product: ProductInput) => void;
@@ -33,26 +31,23 @@ type State = {
   addNewsletterEmail: (email: string) => void;
 };
 
-// Definisikan tipe untuk Data yang disimpan (Hanya data, bukan fungsi)
+// Definisikan tipe untuk Data yang disimpan
 type PersistedState = Pick<
   State,
   "cart" | "wishlist" | "wishlistCount" | "isDarkMode" | "newsletterEmails"
 >;
 
-// --- STORE IMPLEMENTATION ---
-
 export const useStore = create<State>()(
-  // Gunakan 'persist' tanpa generic <State> di sini, karena sudah ada di create<State>()
+  // Gunakan persist tanpa generic kedua, agar tidak memicu TS2345/TS2344
   persist(
     (set, get) => ({
-      // Inisialisasi State
       cart: [],
       wishlist: [],
       wishlistCount: 0,
       isDarkMode: true,
       newsletterEmails: [],
 
-      // Definisi Methods
+      // Metode Cart
       addToCart: (product) =>
         set((state) => {
           const existing = state.cart.find((p) => p.id === product.id);
@@ -72,16 +67,15 @@ export const useStore = create<State>()(
       updateQuantity: (id, quantity) =>
         set((state) => ({
           cart: state.cart.map((p) =>
-            // Fix: Minimal 1, Max 10 (jika diinginkan)
             p.id === id
               ? { ...p, quantity: Math.max(1, Math.min(10, quantity)) }
               : p
           ),
-        })), // <-- SINTAKS SUDAH BENAR DI SINI
+        })), // <-- PERBAIKAN: Koma (,) ditambahkan di sini
 
+      // Metode Wishlist
       addToWishlist: (product) =>
         set((state) => {
-          // Gunakan product input, tetapkan quantity ke 1 jika belum ada
           const existing = state.wishlist.find((p) => p.id === product.id);
           if (existing) return state;
           return {
@@ -91,13 +85,19 @@ export const useStore = create<State>()(
         }),
 
       removeFromWishlist: (id) =>
-        set((state) => ({
-          wishlist: state.wishlist.filter((p) => p.id !== id),
-          wishlistCount: state.wishlist.find((p) => p.id === id)
-            ? state.wishlistCount - 1
-            : state.wishlistCount, // Kurangi hitungan hanya jika item ditemukan
-        })),
+        set((state) => {
+          const isProductInWishlist = state.wishlist.some((p) => p.id === id);
 
+          return {
+            wishlist: state.wishlist.filter((p) => p.id !== id),
+            // Kurangi count hanya jika produk ditemukan dan dihapus
+            wishlistCount: isProductInWishlist
+              ? state.wishlistCount - 1
+              : state.wishlistCount,
+          };
+        }),
+
+      // Metode Lain
       calculateTotal: () =>
         get().cart.reduce(
           (total, p) =>
@@ -115,15 +115,13 @@ export const useStore = create<State>()(
     }),
     {
       name: "febsin-store",
-      // partialize hanya mengembalikan data yang disetujui di PersistedState
       partialize: (state) => ({
         cart: state.cart,
-        wishlist: state.wishlist, // Tambahkan wishlist ke partialize
+        wishlist: state.wishlist,
         wishlistCount: state.wishlistCount,
         isDarkMode: state.isDarkMode,
         newsletterEmails: state.newsletterEmails,
       }),
-      // HILANGKAN 'as PersistedState' dan gunakan 'as const' untuk stabilitas
-    } as const
+    } as const // Menggunakan 'as const' untuk mengatasi sisa konflik typing di Zustand
   )
 );

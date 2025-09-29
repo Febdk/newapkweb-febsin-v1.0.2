@@ -13,7 +13,9 @@ export default function Wishlist() {
   const handleAddToCart = (product: any) => {
     addToCart(product);
     removeFromWishlist(product.id);
-    toast.success(`${product.name} dipindahkan ke keranjang!`);
+    toast.success(`${product.name} dipindahkan ke keranjang!`, {
+      position: "top-right",
+    });
   };
 
   return (

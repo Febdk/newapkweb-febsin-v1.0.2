@@ -41,18 +41,28 @@ export default function ProductDetail() {
   const product = products.find((p) => p.slug === slug);
 
   if (!product)
-    return <div className="py-8 px-4 text-center">Produk tidak ditemukan</div>;
+    return (
+      <div className="py-8 px-4 text-center text-black dark:text-white">
+        Produk tidak ditemukan
+      </div>
+    );
 
   const isInWishlist = wishlist.some((p) => p.id === product.id);
 
   const handleAddToCart = () => {
     addToCart(product);
-    toast.success(`${product.name} ditambahkan ke keranjang!`);
+    toast.success(`${product.name} ditambahkan ke keranjang!`, {
+      position: "top-right",
+    });
   };
 
   const handleAddToWishlist = () => {
-    addToWishlist(product);
-    toast.success(`${product.name} ditambahkan ke wishlist!`);
+    if (!isInWishlist) {
+      addToWishlist(product);
+      toast.success(`${product.name} ditambahkan ke wishlist!`, {
+        position: "top-right",
+      });
+    }
   };
 
   return (

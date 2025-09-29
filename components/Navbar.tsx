@@ -2,15 +2,26 @@
 
 import Link from "next/link";
 import { useStore } from "@/lib/store";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { FaShoppingCart, FaHeart } from "react-icons/fa";
 
 export default function Navbar() {
   const { cart, wishlist, toggleDarkMode, isDarkMode } = useStore();
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery) {
+      router.push(`/search?q=${searchQuery}`);
+    }
+  };
 
   return (
-    <nav className="fixed top-0 w-full bg-white dark:bg-gray-900 shadow z-10">
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <Link href="/" className="text-2xl font-bold text-orange-500">
+    <nav className="fixed top-0 w-full bg-white dark:bg-gray-800 p-4 shadow-md z-10">
+      <div className="container mx-auto flex justify-between items-center">
+        <Link href="/" className="text-xl font-bold text-orange-500">
           Febsin
         </Link>
         <div className="flex space-x-4 items-center">
@@ -46,31 +57,40 @@ export default function Navbar() {
           </Link>
           <Link
             href="/keranjang"
-            className="relative text-black dark:text-white"
+            className="relative text-black dark:text-white hover:text-orange-500"
           >
             <FaShoppingCart size={20} />
-            {cart.length > 0 && (
-              <span className="absolute -top-2 -right-2 bg-orange-500 text-white rounded-full px-2 text-xs">
+            {cart.reduce((sum, p) => sum + p.quantity, 0) > 0 && (
+              <span className="absolute -top-2 -right-2 bg-orange-500 text-white rounded-full px-1 text-xs">
                 {cart.reduce((sum, p) => sum + p.quantity, 0)}
               </span>
             )}
           </Link>
           <Link
             href="/wishlist"
-            className="relative text-black dark:text-white"
+            className="relative text-black dark:text-white hover:text-orange-500"
           >
             <FaHeart size={20} />
             {wishlist.length > 0 && (
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full px-2 text-xs">
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full px-1 text-xs">
                 {wishlist.length}
               </span>
             )}
           </Link>
+          <form onSubmit={handleSearch} className="flex items-center">
+            <input
+              type="text"
+              placeholder="Cari..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="bg-gray-200 dark:bg-gray-700 p-1 rounded-lg text-sm"
+            />
+          </form>
           <button
             onClick={toggleDarkMode}
-            className="text-black dark:text-white"
+            className="text-black dark:text-white text-xl"
           >
-            {isDarkMode ? "🌞" : "🌙"}
+            {isDarkMode ? "☀️" : "🌙"}
           </button>
         </div>
       </div>
